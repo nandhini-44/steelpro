@@ -1,0 +1,773 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>SteelPro — Steel Shop</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Rajdhani:wght@400;600;700&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --gold:#e8b84b;--dark:#0d0d0d;--card:#161616;--border:#252525;
+  --text:#f0f0f0;--muted:#777;--red:#c0392b;--green:#27ae60;
+}
+body{background:var(--dark);color:var(--text);font-family:'Rajdhani',sans-serif;min-height:100vh}
+button,input,textarea,select{font-family:'Rajdhani',sans-serif}
+
+/* ── NAV ── */
+nav{
+  position:fixed;top:0;width:100%;z-index:100;height:58px;
+  background:rgba(8,8,8,.97);border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;padding:0 28px;
+}
+.logo{font-family:'Bebas Neue';font-size:1.6rem;letter-spacing:.1em;cursor:pointer}
+.logo span{color:var(--gold)}
+.nav-links{display:flex;gap:4px;align-items:center}
+.nav-btn{
+  background:none;border:none;color:var(--muted);cursor:pointer;
+  font-size:.8rem;font-weight:700;letter-spacing:.15em;padding:6px 14px;
+  text-transform:uppercase;transition:color .15s;border-bottom:2px solid transparent;
+}
+.nav-btn:hover{color:var(--text)}
+.nav-btn.active{color:var(--gold);border-bottom-color:var(--gold)}
+
+/* ── PAGES ── */
+.page{display:none;padding-top:58px;min-height:100vh;animation:fadeUp .3s ease}
+.page.on{display:block}
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+
+/* ── HERO ── */
+.hero{
+  min-height:calc(100vh - 58px);display:flex;align-items:center;padding:0 48px;
+  background:repeating-linear-gradient(0deg,transparent,transparent 59px,rgba(232,184,75,.03) 59px,rgba(232,184,75,.03) 60px),
+             repeating-linear-gradient(90deg,transparent,transparent 59px,rgba(232,184,75,.02) 59px,rgba(232,184,75,.02) 60px);
+}
+.hero-inner{max-width:620px}
+.eyebrow{font-size:.68rem;letter-spacing:.3em;color:var(--gold);display:flex;align-items:center;gap:10px;margin-bottom:18px}
+.eyebrow::before{content:'';width:28px;height:1.5px;background:var(--gold)}
+.hero h1{font-family:'Bebas Neue';font-size:clamp(3rem,7vw,5.5rem);line-height:1;margin-bottom:16px}
+.hero h1 em{color:var(--gold);font-style:normal}
+.hero p{color:var(--muted);font-size:1rem;line-height:1.8;max-width:400px;margin-bottom:28px}
+.hero-btns{display:flex;gap:12px;flex-wrap:wrap}
+.btn{
+  padding:11px 32px;font-weight:700;font-size:.85rem;letter-spacing:.12em;
+  text-transform:uppercase;cursor:pointer;transition:all .15s;border:none;
+}
+.btn-gold{background:var(--gold);color:#000}
+.btn-gold:hover{background:#c9982a}
+.btn-ghost{background:transparent;color:var(--muted);border:1px solid var(--border)}
+.btn-ghost:hover{border-color:var(--gold);color:var(--gold)}
+
+/* ── SECTION ── */
+.sec{padding:56px 48px}
+.sec-alt{background:#0a0a0a}
+.sec-label{font-size:.68rem;letter-spacing:.28em;color:var(--gold);display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.sec-label::before{content:'';width:24px;height:1.5px;background:var(--gold)}
+.sec-title{font-family:'Bebas Neue';font-size:clamp(1.8rem,3.5vw,2.8rem);margin-bottom:28px}
+.sec-title em{color:var(--gold);font-style:normal}
+
+/* ── PRODUCT GRID ── */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:18px}
+.card{
+  background:var(--card);border:1px solid var(--border);
+  display:flex;flex-direction:column;transition:border-color .2s,transform .2s;
+}
+.card:hover{border-color:var(--gold);transform:translateY(-4px)}
+.card-img{
+  height:180px;background:#1a1a1a;display:flex;align-items:center;
+  justify-content:center;font-size:3rem;color:#2a2a2a;overflow:hidden;position:relative;
+}
+.card-img img{width:100%;height:100%;object-fit:cover;position:absolute;top:0;left:0}
+.card-body{padding:16px;flex:1;display:flex;flex-direction:column}
+.tag{
+  font-size:.62rem;letter-spacing:.18em;color:var(--gold);
+  border:1px solid rgba(232,184,75,.25);padding:2px 8px;
+  display:inline-block;margin-bottom:8px;
+}
+.card-name{font-size:1.05rem;font-weight:700;margin-bottom:5px;line-height:1.2}
+.card-desc{
+  color:var(--muted);font-size:.8rem;line-height:1.6;flex:1;margin-bottom:12px;
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;
+}
+.card-price{font-family:'Bebas Neue';font-size:1.5rem;color:var(--gold);margin-bottom:12px}
+.card-price small{font-family:'Rajdhani';font-size:.72rem;color:var(--muted)}
+.card-row{display:flex;gap:8px}
+.btn-sm{
+  flex:1;padding:7px 0;border:1px solid var(--border);background:none;color:var(--muted);
+  font-weight:700;font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;
+  cursor:pointer;transition:all .15s;
+}
+.btn-sm:hover{border-color:var(--gold);color:var(--gold)}
+.btn-sm.fill{background:var(--gold);color:#000;border-color:var(--gold)}
+.btn-sm.fill:hover{background:#c9982a}
+
+/* ── EMPTY / LOADING ── */
+.empty{text-align:center;padding:60px 20px;color:#333;font-size:.8rem;letter-spacing:.2em}
+.spinner{width:32px;height:32px;border:2px solid #1e1e1e;border-top-color:var(--gold);
+  border-radius:50%;animation:spin .7s linear infinite;margin:0 auto 14px}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ── MODAL / DETAIL ── */
+.overlay{
+  display:none;position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:200;
+  align-items:center;justify-content:center;padding:20px;
+}
+.overlay.on{display:flex}
+.modal{
+  background:#111;border:1px solid var(--border);max-width:640px;width:100%;
+  max-height:90vh;overflow-y:auto;position:relative;animation:fadeUp .25s ease;
+}
+.modal-close{
+  position:absolute;top:14px;right:16px;background:none;border:none;
+  color:var(--muted);font-size:1.3rem;cursor:pointer;line-height:1;
+}
+.modal-close:hover{color:var(--text)}
+.modal-img{height:240px;background:#1a1a1a;display:flex;align-items:center;justify-content:center;font-size:4rem;color:#2a2a2a;overflow:hidden;position:relative}
+.modal-img img{width:100%;height:100%;object-fit:cover;position:absolute;top:0;left:0}
+.modal-body{padding:24px}
+.modal-name{font-family:'Bebas Neue';font-size:2rem;margin-bottom:4px}
+.modal-price{font-family:'Bebas Neue';font-size:1.8rem;color:var(--gold);margin-bottom:14px}
+.modal-desc{color:var(--muted);font-size:.9rem;line-height:1.7;margin-bottom:20px}
+.spec-row{display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border);font-size:.85rem}
+.spec-row:last-child{border:none}
+.spec-key{color:var(--muted)}
+
+/* ── FORM ── */
+.form-wrap{max-width:540px}
+.form-group{margin-bottom:18px}
+.form-group label{display:block;font-size:.7rem;letter-spacing:.15em;color:var(--muted);margin-bottom:7px;text-transform:uppercase}
+.form-group input,.form-group textarea,.form-group select{
+  width:100%;background:#0f0f0f;border:1px solid var(--border);
+  color:var(--text);font-size:.95rem;padding:11px 14px;outline:none;transition:border-color .15s;
+}
+.form-group input:focus,.form-group textarea:focus,.form-group select:focus{border-color:var(--gold)}
+.form-group textarea{resize:vertical;min-height:100px}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.alert{padding:11px 16px;margin-bottom:16px;font-size:.88rem;letter-spacing:.04em;border-left:3px solid}
+.alert-ok{background:rgba(39,174,96,.08);color:#2ecc71;border-color:var(--green)}
+.alert-err{background:rgba(192,57,43,.08);color:#e74c3c;border-color:var(--red)}
+
+/* ── ADMIN ── */
+.login-box{max-width:360px;margin:80px auto;background:var(--card);border:1px solid var(--border);padding:36px}
+.login-box h2{font-family:'Bebas Neue';font-size:1.8rem;color:var(--gold);margin-bottom:22px}
+.dash-stats{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:28px}
+.stat{background:var(--card);border:1px solid var(--border);padding:18px 24px;min-width:120px}
+.stat .num{font-family:'Bebas Neue';font-size:2.2rem;color:var(--gold)}
+.stat .lbl{font-size:.68rem;letter-spacing:.18em;color:var(--muted)}
+.dash-bar{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;flex-wrap:wrap;gap:10px}
+table{width:100%;border-collapse:collapse;font-size:.85rem}
+th{color:var(--muted);font-size:.68rem;letter-spacing:.18em;padding:10px 12px;text-align:left;border-bottom:1px solid var(--border)}
+td{padding:10px 12px;border-bottom:1px solid #111;color:var(--text);vertical-align:middle}
+.del-btn{background:none;border:1px solid #2a2a2a;color:#444;padding:4px 10px;cursor:pointer;font-size:.72rem;font-family:'Rajdhani';transition:all .15s}
+.del-btn:hover{border-color:var(--red);color:var(--red)}
+.edit-btn{background:none;border:1px solid #2a2a2a;color:#444;padding:4px 10px;cursor:pointer;font-size:.72rem;font-family:'Rajdhani';transition:all .15s;margin-right:5px}
+.edit-btn:hover{border-color:var(--gold);color:var(--gold)}
+.sub-title{font-family:'Bebas Neue';font-size:1.4rem;margin:28px 0 14px;color:var(--text)}
+
+/* ── SEARCH BAR ── */
+.search-bar{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:24px}
+.search-bar input,.search-bar select{
+  background:#0f0f0f;border:1px solid var(--border);color:var(--text);
+  font-size:.88rem;padding:9px 14px;outline:none;flex:1;min-width:150px;transition:border-color .15s;
+}
+.search-bar input:focus,.search-bar select:focus{border-color:var(--gold)}
+
+/* ── WHATSAPP ── */
+.wa{
+  position:fixed;bottom:22px;right:22px;width:50px;height:50px;
+  background:#25d366;display:flex;align-items:center;justify-content:center;
+  font-size:1.4rem;z-index:150;cursor:pointer;
+  box-shadow:0 3px 12px rgba(37,211,102,.3);transition:transform .15s;text-decoration:none;
+}
+.wa:hover{transform:scale(1.1)}
+
+/* ── FILTER/SORT PILL ── */
+.pill-label{font-size:.65rem;letter-spacing:.18em;color:var(--muted);margin-bottom:4px}
+
+/* ── RESPONSIVE ── */
+@media(max-width:640px){
+  .sec,.hero{padding:40px 18px}
+  nav{padding:0 16px}
+  .nav-btn{font-size:.72rem;padding:5px 9px}
+  .form-row{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<!-- ─── NAV ─────────────────────────────────────────────────────────────────── -->
+<nav>
+  <div class="logo" onclick="go('home')">STEEL<span>PRO</span></div>
+  <div class="nav-links">
+    <button class="nav-btn active" id="nb-home"     onclick="go('home')">Home</button>
+    <button class="nav-btn"        id="nb-products" onclick="go('products')">Products</button>
+    <button class="nav-btn"        id="nb-enquiry"  onclick="go('enquiry')">Enquiry</button>
+    <button class="nav-btn"        id="nb-admin"    onclick="go('admin')">Admin</button>
+  </div>
+</nav>
+
+<!-- ─── HOME ──────────────────────────────────────────────────────────────── -->
+<div class="page on" id="pg-home">
+  <div class="hero">
+    <div class="hero-inner">
+      <div class="eyebrow">INDIA'S TRUSTED STEEL SUPPLIER</div>
+      <h1>BUILT FOR<br><em>STRENGTH.</em><br>FORGED FOR<br><em>EXCELLENCE.</em></h1>
+      <p>Premium steel pipes, TMT bars, sheets &amp; structural products — engineered for industrial excellence across Tamil Nadu.</p>
+      <div class="hero-btns">
+        <button class="btn btn-gold" onclick="go('products')">Browse Products</button>
+        <button class="btn btn-ghost" onclick="go('enquiry')">Get Quote</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Features strip -->
+  <div style="background:#0a0a0a;border-top:1px solid var(--border);border-bottom:1px solid var(--border);display:flex;flex-wrap:wrap">
+    <div style="flex:1;min-width:180px;padding:22px 28px;border-right:1px solid var(--border)">
+      <div style="color:var(--gold);font-size:.75rem;letter-spacing:.2em;margin-bottom:4px">✦ ISI CERTIFIED</div>
+      <div style="color:var(--muted);font-size:.78rem;line-height:1.5">All products meet Bureau of Indian Standards norms</div>
+    </div>
+    <div style="flex:1;min-width:180px;padding:22px 28px;border-right:1px solid var(--border)">
+      <div style="color:var(--gold);font-size:.75rem;letter-spacing:.2em;margin-bottom:4px">✦ FAST DELIVERY</div>
+      <div style="color:var(--muted);font-size:.78rem;line-height:1.5">Same-day dispatch for in-stock items</div>
+    </div>
+    <div style="flex:1;min-width:180px;padding:22px 28px;border-right:1px solid var(--border)">
+      <div style="color:var(--gold);font-size:.75rem;letter-spacing:.2em;margin-bottom:4px">✦ 24/7 SUPPORT</div>
+      <div style="color:var(--muted);font-size:.78rem;line-height:1.5">Expert steel consultants always available</div>
+    </div>
+    <div style="flex:1;min-width:180px;padding:22px 28px">
+      <div style="color:var(--gold);font-size:.75rem;letter-spacing:.2em;margin-bottom:4px">✦ PAN-INDIA</div>
+      <div style="color:var(--muted);font-size:.78rem;line-height:1.5">Serving 2000+ clients across India</div>
+    </div>
+  </div>
+
+  <div class="sec sec-alt">
+    <div class="sec-label">FEATURED</div>
+    <div class="sec-title">TOP <em>PRODUCTS</em></div>
+    <div class="grid" id="home-grid"><div class="empty"><div class="spinner"></div>LOADING...</div></div>
+    <div style="text-align:center;margin-top:28px">
+      <button class="btn btn-ghost" onclick="go('products')">View All Products →</button>
+    </div>
+  </div>
+
+  <!-- CTA Banner -->
+  <div style="background:var(--gold);padding:40px 48px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px">
+    <div>
+      <div style="font-family:'Bebas Neue';font-size:1.8rem;color:#000;letter-spacing:.04em">NEED A CUSTOM QUOTE?</div>
+      <div style="color:rgba(0,0,0,.6);font-size:.88rem">Our experts respond within 2 hours.</div>
+    </div>
+    <button class="btn" style="background:#000;color:var(--gold)" onclick="go('enquiry')">Send Enquiry Now</button>
+  </div>
+
+  <!-- Footer -->
+  <footer style="background:#080808;border-top:1px solid var(--border);padding:32px 48px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:16px;align-items:center">
+    <div style="font-family:'Bebas Neue';font-size:1.2rem;letter-spacing:.1em">STEEL<span style="color:var(--gold)">PRO</span></div>
+    <div style="color:#333;font-size:.72rem;letter-spacing:.1em">© 2025 STEELPRO. ALL RIGHTS RESERVED.</div>
+    <div style="color:#444;font-size:.78rem">📞 +91 7200858010 &nbsp;|&nbsp; 📧 nandhiniraja310304@gmail.in</div>
+  </footer>
+</div>
+
+<!-- ─── PRODUCTS ────────────────────────────────────────────────────────────── -->
+<div class="page" id="pg-products">
+  <div class="sec">
+    <div class="sec-label">CATALOGUE</div>
+    <div class="sec-title">ALL <em>PRODUCTS</em></div>
+    <div class="search-bar">
+      <input type="text" id="srch" placeholder="🔍 Search by name or description…" oninput="renderProducts()"/>
+      <select id="cat-fil" onchange="renderProducts()">
+        <option value="">All Categories</option>
+      </select>
+      <select id="sort-fil" onchange="renderProducts()">
+        <option value="">Default</option>
+        <option value="asc">Price: Low → High</option>
+        <option value="desc">Price: High → Low</option>
+        <option value="az">Name A – Z</option>
+      </select>
+    </div>
+    <div id="prod-count" style="color:var(--muted);font-size:.78rem;letter-spacing:.12em;margin-bottom:18px"></div>
+    <div class="grid" id="prod-grid"><div class="empty"><div class="spinner"></div>LOADING...</div></div>
+  </div>
+</div>
+
+<!-- ─── ENQUIRY ─────────────────────────────────────────────────────────────── -->
+<div class="page" id="pg-enquiry">
+  <div class="sec">
+    <div class="sec-label">CONTACT</div>
+    <div class="sec-title">SEND AN <em>ENQUIRY</em></div>
+
+    <div class="form-wrap">
+
+      <form action="https://formspree.io/f/maqlvrnv" method="POST">
+
+      <div id="enq-alert" style="display:none"></div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>Your Name *</label>
+          <input type="text" id="e-name" name="name" placeholder="Ravi Kumar" required>
+        </div>
+
+        <div class="form-group">
+          <label>Phone *</label>
+          <input type="tel" id="e-phone" name="phone" placeholder="9999999999" required>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Product Interest</label>
+        <select id="e-prod" name="product">
+          <option value="">— Select a product (optional) —</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>Message *</label>
+        <textarea id="e-msg" name="message" placeholder="Describe your requirement…" required></textarea>
+      </div>
+
+      <button class="btn btn-gold" type="submit">SUBMIT ENQUIRY</button>
+
+      </form>
+
+    </div>
+  </div>
+</div>
+
+<!-- ─── ADMIN ───────────────────────────────────────────────────────────────── -->
+<div class="page" id="pg-admin">
+
+  <!-- Login -->
+  <div id="admin-login" class="sec">
+    <div class="login-box">
+      <h2>ADMIN LOGIN</h2>
+      <div id="login-alert" style="display:none"></div>
+      <div class="form-group"><label>Username</label><input type="text" id="l-user" placeholder="admin" value="admin"/></div>
+      <div class="form-group"><label>Password</label><input type="password" id="l-pass" placeholder="••••••••" value="admin123"/></div>
+      <button class="btn btn-gold" style="width:100%" onclick="doLogin()">LOGIN</button>
+      <div style="color:#333;font-size:.75rem;margin-top:12px;letter-spacing:.04em">Default: admin / admin123</div>
+    </div>
+  </div>
+
+  <!-- Dashboard -->
+  <div id="admin-dash" style="display:none" class="sec">
+    <div class="dash-bar">
+      <div>
+        <div class="sec-label">ADMIN PANEL</div>
+        <div class="sec-title" style="margin-bottom:0">DASHBOARD</div>
+      </div>
+      <button class="btn btn-ghost" onclick="doLogout()">LOGOUT</button>
+    </div>
+
+    <div class="dash-stats">
+      <div class="stat"><div class="num" id="s-products">0</div><div class="lbl">PRODUCTS</div></div>
+      <div class="stat"><div class="num" id="s-enquiries">0</div><div class="lbl">ENQUIRIES</div></div>
+    </div>
+
+    <!-- Add/Edit Product form -->
+    <div style="background:#0f0f0f;border:1px solid var(--border);padding:24px;margin-bottom:28px">
+      <div style="font-family:'Bebas Neue';font-size:1.35rem;color:var(--gold);margin-bottom:18px" id="form-mode-label">ADD NEW PRODUCT</div>
+      <div id="add-alert" style="display:none"></div>
+      <div class="form-row">
+        <div class="form-group"><label>Product Name *</label><input type="text" id="p-name" placeholder="e.g. TMT Bar 12mm"/></div>
+        <div class="form-group"><label>Price (₹/unit) *</label><input type="number" id="p-price" placeholder="e.g. 5500"/></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>Category</label><input type="text" id="p-cat" placeholder="e.g. TMT Bars"/></div>
+        <div class="form-group"><label>Image URL (optional)</label><input type="text" id="p-img" placeholder="https://..."/></div>
+      </div>
+      <div class="form-group"><label>Description</label><textarea id="p-desc" style="min-height:72px" placeholder="Short product description…"></textarea></div>
+      <div style="display:flex;gap:10px">
+        <button class="btn btn-gold" id="save-btn" onclick="saveProduct()">ADD PRODUCT</button>
+        <button class="btn btn-ghost" id="cancel-btn" style="display:none" onclick="cancelEdit()">CANCEL</button>
+      </div>
+      <input type="hidden" id="p-edit-id" value=""/>
+    </div>
+
+    <!-- Products table -->
+    <div class="sub-title">PRODUCTS (<span id="pt-count">0</span>)</div>
+    <div style="overflow-x:auto">
+      <table id="p-table">
+        <thead><tr><th>ID</th><th>NAME</th><th>CATEGORY</th><th>PRICE</th><th>ACTIONS</th></tr></thead>
+        <tbody id="p-tbody"></tbody>
+      </table>
+    </div>
+
+    <!-- Enquiries table -->
+    <div class="sub-title" style="margin-top:36px">ENQUIRIES (<span id="et-count">0</span>)</div>
+    <div style="overflow-x:auto">
+      <table>
+        <thead><tr><th>ID</th><th>NAME</th><th>PHONE</th><th>PRODUCT</th><th>MESSAGE</th><th>DATE</th><th></th></tr></thead>
+        <tbody id="e-tbody"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ─── PRODUCT DETAIL MODAL ─────────────────────────────────────────────────── -->
+<div class="overlay" id="modal-overlay" onclick="closeModal(event)">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal()">✕</button>
+    <div class="modal-img" id="m-img">⬡</div>
+    <div class="modal-body">
+      <div class="tag" id="m-cat"></div>
+      <div class="modal-name" id="m-name"></div>
+      <div class="modal-price" id="m-price"></div>
+      <div class="modal-desc" id="m-desc"></div>
+      <div id="m-specs"></div>
+      <div style="display:flex;gap:10px;margin-top:20px;flex-wrap:wrap">
+        <button class="btn btn-gold" style="flex:1" id="m-enq-btn">SEND ENQUIRY</button>
+        <a class="btn btn-ghost" style="flex:1;text-align:center;text-decoration:none" id="m-wa" target="_blank">💬 WHATSAPP</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- WhatsApp -->
+<a class="wa" href="https://wa.me/917200858010?text=Hi!+I'm+interested+in+your+steel+products." target="_blank" title="Chat on WhatsApp">💬</a>
+
+<!-- ─── BACKEND (JavaScript "Server" + localStorage "Database") ──────────────── -->
+<script>
+/* ══════════════════════════════════════════════════════
+   DATABASE  — localStorage (acts as persistent DB)
+══════════════════════════════════════════════════════ */
+const DB = {
+  get(key)        { try{ return JSON.parse(localStorage.getItem(key)||'null') }catch{ return null }},
+  set(key,val)    { localStorage.setItem(key, JSON.stringify(val)) },
+  nextId(key)     { const n=(DB.get(key+'_seq')||0)+1; DB.set(key+'_seq',n); return n },
+};
+
+/* Seed demo products if first run */
+function seedDB(){
+  if(DB.get('products')) return;
+  const demo=[
+    {id:1,name:'TMT Bar Fe-500 12mm',category:'TMT Bars',price:5800,description:'High tensile strength TMT bars, ideal for RCC constructions. BIS certified.',imageUrl:'https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=500&q=80'},
+    {id:2,name:'MS Square Pipe 40×40',category:'Pipes & Tubes',price:3200,description:'Mild steel square hollow section pipe, used in frames and structures.',imageUrl:'https://images.unsplash.com/photo-1589939705384-5185137a7f0f?w=500&q=80'},
+    {id:3,name:'HR Steel Sheet 3mm',category:'Steel Sheets',price:7500,description:'Hot rolled steel sheets in standard 8×4 ft size. Rust-resistant finish.',imageUrl:'https://images.unsplash.com/photo-1534126511673-b6899657816a?w=500&q=80'},
+    {id:4,name:'Angle Iron 50×50×5mm',category:'Angles & Channels',price:2900,description:'Equal angle iron for structural support, shelving and fabrication work.',imageUrl:''},
+    {id:5,name:'Chequered Plate 5mm',category:'Steel Sheets',price:8200,description:'Anti-skid chequered plate for flooring, ramps and vehicle platforms.',imageUrl:''},
+    {id:6,name:'GI Pipe 25mm Dia',category:'Pipes & Tubes',price:2100,description:'Galvanised iron pipe for water supply, fencing and structural use.',imageUrl:''},
+  ];
+  DB.set('products', demo);
+  DB.set('products_seq', 6);
+  DB.set('enquiries', []);
+  DB.set('enquiries_seq', 0);
+}
+
+/* ══════════════════════════════════════════════════════
+   API LAYER  — functions that mirror REST endpoints
+══════════════════════════════════════════════════════ */
+const API = {
+  /* Products */
+  getProducts()         { return DB.get('products') || [] },
+  getProduct(id)        { return API.getProducts().find(p=>p.id==id) || null },
+  getCategories()       { return [...new Set(API.getProducts().map(p=>p.category).filter(Boolean))] },
+  createProduct(data)   {
+    const p = {...data, id: DB.nextId('products'), imageUrl: data.imageUrl||''};
+    const list = API.getProducts(); list.push(p); DB.set('products',list); return p;
+  },
+  updateProduct(id,data){
+    const list = API.getProducts();
+    const i = list.findIndex(p=>p.id==id);
+    if(i<0) return null;
+    list[i] = {...list[i],...data,id:list[i].id};
+    DB.set('products',list); return list[i];
+  },
+  deleteProduct(id)     {
+    const list = API.getProducts().filter(p=>p.id!=id);
+    DB.set('products',list); return true;
+  },
+
+  /* Enquiries */
+  getEnquiries()        { return DB.get('enquiries') || [] },
+  createEnquiry(data)   {
+    const e = {...data, id: DB.nextId('enquiries'), date: new Date().toLocaleDateString('en-IN')};
+    const list = API.getEnquiries(); list.push(e); DB.set('enquiries',list); return e;
+  },
+  deleteEnquiry(id)     {
+    DB.set('enquiries', API.getEnquiries().filter(e=>e.id!=id)); return true;
+  },
+
+  /* Auth */
+  CREDS: {admin:'admin123'},
+  login(u,p) { return API.CREDS[u] && API.CREDS[u]===p ? {token:'tok_'+btoa(u+':'+Date.now()),name:u} : null },
+};
+
+/* ══════════════════════════════════════════════════════
+   FRONTEND LOGIC
+══════════════════════════════════════════════════════ */
+let adminToken = sessionStorage.getItem('adminToken') || '';
+let editingId  = null;
+
+/* ── Navigation ───────────────────────────────────────────────────────────── */
+function go(page){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('on'));
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('pg-'+page).classList.add('on');
+  document.getElementById('nb-'+page).classList.add('active');
+  if(page==='home')     renderHome();
+  if(page==='products') renderProducts();
+  if(page==='enquiry')  initEnquiryForm();
+  if(page==='admin')    checkAdmin();
+}
+
+/* ── HOME ─────────────────────────────────────────────────────────────────── */
+function renderHome(){
+  const prods = API.getProducts().slice(0,3);
+  renderGrid('home-grid', prods);
+}
+
+/* ── PRODUCTS ─────────────────────────────────────────────────────────────── */
+function renderProducts(){
+  let prods = API.getProducts();
+  const q   = (document.getElementById('srch')?.value||'').toLowerCase();
+  const cat = document.getElementById('cat-fil')?.value || '';
+  const srt = document.getElementById('sort-fil')?.value || '';
+
+  /* Populate category dropdown */
+  const catEl = document.getElementById('cat-fil');
+  if(catEl && catEl.options.length <= 1){
+    API.getCategories().forEach(c=>{
+      const o=document.createElement('option'); o.value=c; o.textContent=c; catEl.appendChild(o);
+    });
+  }
+  /* Populate enquiry product dropdown */
+  const eProd = document.getElementById('e-prod');
+  if(eProd && eProd.options.length<=1){
+    API.getProducts().forEach(p=>{
+      const o=document.createElement('option'); o.value=p.name; o.textContent=p.name; eProd.appendChild(o);
+    });
+  }
+
+  if(q)   prods = prods.filter(p=>p.name.toLowerCase().includes(q)||(p.description||'').toLowerCase().includes(q));
+  if(cat) prods = prods.filter(p=>p.category===cat);
+  if(srt==='asc')  prods.sort((a,b)=>a.price-b.price);
+  if(srt==='desc') prods.sort((a,b)=>b.price-a.price);
+  if(srt==='az')   prods.sort((a,b)=>a.name.localeCompare(b.name));
+
+  const countEl = document.getElementById('prod-count');
+  if(countEl) countEl.textContent = prods.length+' PRODUCT'+(prods.length!==1?'S':'')+' FOUND';
+  renderGrid('prod-grid', prods, true);
+}
+
+function renderGrid(containerId, prods, showDetail=false){
+  const el = document.getElementById(containerId);
+  if(!el) return;
+  if(!prods.length){ el.innerHTML='<div class="empty">NO PRODUCTS FOUND</div>'; return; }
+  el.innerHTML = prods.map(p=>`
+    <div class="card">
+      <div class="card-img">${p.imageUrl?`<img src="${esc(p.imageUrl)}" alt="${esc(p.name)}" onerror="this.style.display='none'"/>`:'⬡'}</div>
+      <div class="card-body">
+        ${p.category?`<span class="tag">${esc(p.category)}</span>`:''}
+        <div class="card-name">${esc(p.name)}</div>
+        <div class="card-desc">${esc(p.description||'—')}</div>
+        <div class="card-price">₹${fmt(p.price)} <small>/unit</small></div>
+        <div class="card-row">
+          ${showDetail?`<button class="btn-sm" onclick="openModal(${p.id})">DETAILS</button>`:''}
+          <button class="btn-sm fill" onclick="quickEnquiry('${esc(p.name)}')">ENQUIRE</button>
+        </div>
+      </div>
+    </div>`).join('');
+}
+
+/* ── MODAL ────────────────────────────────────────────────────────────────── */
+function openModal(id){
+  const p = API.getProduct(id);
+  if(!p) return;
+  const imgEl = document.getElementById('m-img');
+  imgEl.innerHTML = p.imageUrl ? `<img src="${esc(p.imageUrl)}" alt="${esc(p.name)}" onerror="this.innerHTML='⬡'"/>` : '⬡';
+  document.getElementById('m-cat').textContent   = p.category || '';
+  document.getElementById('m-cat').style.display = p.category ? 'inline-block' : 'none';
+  document.getElementById('m-name').textContent  = p.name;
+  document.getElementById('m-price').textContent = '₹'+fmt(p.price)+' / unit';
+  document.getElementById('m-desc').textContent  = p.description || '—';
+  document.getElementById('m-specs').innerHTML   = [
+    {k:'Category',v:p.category||'—'},{k:'Price',v:'₹'+fmt(p.price)+' / unit'},
+    {k:'Standard',v:'BIS / IS 2062'},{k:'Availability',v:'In Stock'},
+  ].map(s=>`<div class="spec-row"><span class="spec-key">${s.k}</span><span>${s.v}</span></div>`).join('');
+  const waMsg = encodeURIComponent(`Hi! I'm interested in ${p.name} (₹${p.price}/unit). Please share details.`);
+  document.getElementById('m-wa').href = `https://wa.me/917200858010?text=${waMsg}`;
+  document.getElementById('m-enq-btn').onclick = ()=>{ closeModal(); quickEnquiry(p.name); };
+  document.getElementById('modal-overlay').classList.add('on');
+}
+function closeModal(e){
+  if(!e || e.target===document.getElementById('modal-overlay'))
+    document.getElementById('modal-overlay').classList.remove('on');
+}
+
+/* ── ENQUIRY ──────────────────────────────────────────────────────────────── */
+function initEnquiryForm(){
+  const eProd = document.getElementById('e-prod');
+  if(eProd.options.length<=1){
+    API.getProducts().forEach(p=>{
+      const o=document.createElement('option'); o.value=p.name; o.textContent=p.name; eProd.appendChild(o);
+    });
+  }
+}
+function quickEnquiry(productName){
+  go('enquiry');
+  document.getElementById('e-msg').value = `I am interested in: ${productName}. Please provide pricing and availability.`;
+  const sel = document.getElementById('e-prod');
+  for(let o of sel.options) if(o.value===productName){ sel.value=productName; break; }
+}
+function submitEnquiry(){
+  const name  = document.getElementById('e-name').value.trim();
+  const phone = document.getElementById('e-phone').value.trim();
+  const prod  = document.getElementById('e-prod').value;
+  const msg   = document.getElementById('e-msg').value.trim();
+  const al    = document.getElementById('enq-alert');
+  al.style.display='none';
+
+  if(!name||!phone||!msg){ showAlert(al,'Please fill in all required fields (*)','err'); return; }
+  if(!/^[0-9]{10}$/.test(phone)){ showAlert(al,'Enter a valid 10-digit phone number','err'); return; }
+
+  API.createEnquiry({customerName:name, phone, product:prod||'General', message:msg});
+  showAlert(al,'✓ Enquiry submitted! We will contact you within 2 hours.','ok');
+  document.getElementById('e-name').value='';
+  document.getElementById('e-phone').value='';
+  document.getElementById('e-msg').value='';
+  document.getElementById('e-prod').value='';
+}
+
+/* ── ADMIN AUTH ───────────────────────────────────────────────────────────── */
+function checkAdmin(){
+  if(adminToken){
+    document.getElementById('admin-login').style.display='none';
+    document.getElementById('admin-dash').style.display='block';
+    loadDash();
+  } else {
+    document.getElementById('admin-login').style.display='block';
+    document.getElementById('admin-dash').style.display='none';
+  }
+}
+function doLogin(){
+  const u=document.getElementById('l-user').value.trim();
+  const p=document.getElementById('l-pass').value;
+  const al=document.getElementById('login-alert');
+  al.style.display='none';
+  const res = API.login(u,p);
+  if(res){
+    adminToken=res.token;
+    sessionStorage.setItem('adminToken',adminToken);
+    checkAdmin();
+  } else {
+    showAlert(al,'Invalid username or password','err');
+  }
+}
+function doLogout(){
+  adminToken='';
+  sessionStorage.removeItem('adminToken');
+  checkAdmin();
+}
+
+/* ── ADMIN DASHBOARD ──────────────────────────────────────────────────────── */
+function loadDash(){
+  const prods = API.getProducts();
+  const enqs  = API.getEnquiries();
+  document.getElementById('s-products').textContent  = prods.length;
+  document.getElementById('s-enquiries').textContent = enqs.length;
+  document.getElementById('pt-count').textContent    = prods.length;
+  document.getElementById('et-count').textContent    = enqs.length;
+
+  document.getElementById('p-tbody').innerHTML = prods.length
+    ? prods.map(p=>`
+      <tr>
+        <td style="color:var(--muted)">${p.id}</td>
+        <td>${esc(p.name)}</td>
+        <td>${p.category?`<span class="tag">${esc(p.category)}</span>`:'—'}</td>
+        <td style="color:var(--gold);font-family:'Bebas Neue';font-size:1.1rem">₹${fmt(p.price)}</td>
+        <td>
+          <button class="edit-btn" onclick="startEdit(${p.id})">EDIT</button>
+          <button class="del-btn" onclick="delProduct(${p.id})">DELETE</button>
+        </td>
+      </tr>`).join('')
+    : '<tr><td colspan="5" style="color:#333;text-align:center;padding:30px">No products yet.</td></tr>';
+
+  document.getElementById('e-tbody').innerHTML = enqs.length
+    ? [...enqs].reverse().map(e=>`
+      <tr>
+        <td style="color:var(--muted)">${e.id}</td>
+        <td>${esc(e.customerName)}</td>
+        <td>${esc(e.phone)}</td>
+        <td style="color:var(--muted)">${esc(e.product||'—')}</td>
+        <td style="max-width:220px;color:var(--muted)">${esc(e.message)}</td>
+        <td style="color:var(--muted);white-space:nowrap">${e.date}</td>
+        <td><button class="del-btn" onclick="delEnquiry(${e.id})">DEL</button></td>
+      </tr>`).join('')
+    : '<tr><td colspan="7" style="color:#333;text-align:center;padding:30px">No enquiries yet.</td></tr>';
+}
+
+function saveProduct(){
+  const name  = document.getElementById('p-name').value.trim();
+  const price = parseFloat(document.getElementById('p-price').value);
+  const cat   = document.getElementById('p-cat').value.trim();
+  const img   = document.getElementById('p-img').value.trim();
+  const desc  = document.getElementById('p-desc').value.trim();
+  const al    = document.getElementById('add-alert');
+  al.style.display='none';
+
+  if(!name||!price||price<=0){ showAlert(al,'Product name and valid price are required','err'); return; }
+
+  if(editingId){
+    API.updateProduct(editingId,{name,price,category:cat,imageUrl:img,description:desc});
+    showAlert(al,'✓ Product updated successfully!','ok');
+    cancelEdit();
+  } else {
+    API.createProduct({name,price,category:cat,imageUrl:img,description:desc});
+    showAlert(al,'✓ Product added successfully!','ok');
+    document.getElementById('p-name').value='';
+    document.getElementById('p-price').value='';
+    document.getElementById('p-cat').value='';
+    document.getElementById('p-img').value='';
+    document.getElementById('p-desc').value='';
+  }
+  loadDash();
+}
+
+function startEdit(id){
+  const p = API.getProduct(id);
+  if(!p) return;
+  editingId = id;
+  document.getElementById('p-name').value  = p.name;
+  document.getElementById('p-price').value = p.price;
+  document.getElementById('p-cat').value   = p.category||'';
+  document.getElementById('p-img').value   = p.imageUrl||'';
+  document.getElementById('p-desc').value  = p.description||'';
+  document.getElementById('form-mode-label').textContent = 'EDIT PRODUCT #'+id;
+  document.getElementById('save-btn').textContent = 'UPDATE PRODUCT';
+  document.getElementById('cancel-btn').style.display='inline-block';
+  document.getElementById('form-mode-label').scrollIntoView({behavior:'smooth'});
+}
+function cancelEdit(){
+  editingId=null;
+  document.getElementById('p-name').value=''; document.getElementById('p-price').value='';
+  document.getElementById('p-cat').value='';  document.getElementById('p-img').value='';
+  document.getElementById('p-desc').value='';
+  document.getElementById('form-mode-label').textContent='ADD NEW PRODUCT';
+  document.getElementById('save-btn').textContent='ADD PRODUCT';
+  document.getElementById('cancel-btn').style.display='none';
+  document.getElementById('add-alert').style.display='none';
+}
+function delProduct(id){
+  if(!confirm('Delete this product?')) return;
+  API.deleteProduct(id); loadDash();
+}
+function delEnquiry(id){
+  if(!confirm('Delete this enquiry?')) return;
+  API.deleteEnquiry(id); loadDash();
+}
+
+/* ── UTILS ────────────────────────────────────────────────────────────────── */
+function showAlert(el,msg,type){
+  el.className='alert alert-'+type;
+  el.textContent=msg;
+  el.style.display='block';
+  if(type==='ok') setTimeout(()=>el.style.display='none',4000);
+}
+function esc(s){ const d=document.createElement('div'); d.textContent=s||''; return d.innerHTML; }
+function fmt(n){ return Number(n).toLocaleString('en-IN'); }
+
+/* ── INIT ─────────────────────────────────────────────────────────────────── */
+seedDB();
+renderHome();
+</script>
+</body>
+</html>
